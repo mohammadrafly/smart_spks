@@ -27,21 +27,19 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
             ];
 
-            $user = User::where('email', $data['email'])->first();
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'phone' => 'required|numeric|unique:users,phone',
+                'usertype' => 'required|string|in:admin,guru,bk',
+                'password' => 'required|string|min:8|confirmed',
+            ]);
 
-            if (!empty($user['email'])) {
-                return response()->json(['message' => 'Email sudah ada di database!'], 200);
+            if (!User::create($data)) {
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah pengguna']);
             }
 
-            if (!empty($user['phone'])) {
-                return response()->json(['message' => 'Nomor sudah ada di database!'], 200);
-            }
-
-            if (!User::insert($data)) {
-                return response()->json(['message' => 'Gagal menambah pengguna'], 200);
-            }
-
-            return response()->json(['message' => 'Berhasil menambah pengguna', 'redirect' => route('user')], 200);
+            return redirect()->route('user')->with('success', 'Berhasil menambah pengguna');
         }
 
         return view('pages.dashboard.user.create', [
@@ -52,19 +50,24 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::find($id);
+
         if ($request->isMethod('POST')) {
-            $data = [
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'usertype' => $request->usertype
+            $data = $request->only(['name', 'email', 'phone', 'usertype']);
+
+            $rules = [
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'phone' => 'required|numeric|unique:users,phone,' . $user->id,
+                'usertype' => 'required|string|in:admin,guru,bk',
             ];
 
+            $request->validate($rules);
+
             if (!$user->update($data)) {
-                return response()->json(['message' => 'Gagal menambah pengguna'], 200);
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah pengguna']);
             }
 
-            return response()->json(['message' => 'Berhasil menambah pengguna'], 200);
+            return redirect()->to('dashboard/user/update/' . $id)->with(['success' => 'Berhasil update pengguna!']);
         }
 
         return view('pages.dashboard.user.update', [
@@ -77,9 +80,9 @@ class UserController extends Controller
     {
         $data = User::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['message' => 'Gagal hapus pengguna!'], 200);
+            return response()->json(['error' => 'Gagal hapus pengguna!'], 200);
         }
 
-        return response()->json(['message' => 'Berhasil hapus pengguna!'], 200);
+        return redirect()->to('dashboard/user')->with(['success' => 'Berhasil hapus pengguna!']);
     }
 }

@@ -12,14 +12,9 @@ class Pelanggaran extends Model
     protected $table = 'pelanggaran';
     protected $guarded = [];
 
-    public function kriteriaPelanggaran()
+    public function listPelanggaran()
     {
-        return $this->belongsTo(KriteriaPelanggaran::class, 'id_kriteria', 'id');
-    }
-
-    public function jenisPelanggaran()
-    {
-        return $this->belongsTo(JenisPelanggaran::class, 'id_jenis', 'id');
+        return $this->hasMany(ListPelanggaran::class)->with('kriteria', 'jenis');
     }
 
     public function siswa()

@@ -11,4 +11,9 @@ class Siswa extends Model
     
     protected $table = 'siswa';
     protected $guarded = [];
+
+    public function walikelas()
+    {
+        return $this->belongsTo(User::class, 'wali_kelas_id');
+    }
 }

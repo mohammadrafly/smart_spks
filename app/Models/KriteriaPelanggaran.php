@@ -11,4 +11,9 @@ class KriteriaPelanggaran extends Model
 
     protected $table = 'kriteria_pelanggaran';
     protected $guarded = [];
+
+    public function jenis()
+    {
+        return $this->hasMany(JenisPelanggaran::class, 'kode_kriteria', 'kode');
+    }
 }

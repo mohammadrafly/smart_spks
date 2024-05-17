@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('pelanggaran', function (Blueprint $table) {
             $table->id();
             $table->string('id_siswa');
-            $table->string('id_kriteria');
-            $table->string('id_jenis');
             $table->string('id_tindakan');
             $table->string('id_sanksi');
             $table->timestamps();

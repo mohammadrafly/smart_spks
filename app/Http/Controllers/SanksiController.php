@@ -7,6 +7,22 @@ use Illuminate\Http\Request;
 
 class SanksiController extends Controller
 {
+    /**
+     * Generate a unique code with a specified prefix.
+     *
+     * @param string $prefix
+     * @return string
+     */
+    private function generateUniqueCode($prefix)
+    {
+        $code = '';
+        do {
+            $code = $prefix . strtoupper(uniqid());
+        } while (Sanksi::where('kode_sanksi', $code)->exists());
+
+        return $code;
+    }
+
     public function index()
     {   
         return view('pages.dashboard.sanksi.index', [
@@ -18,47 +34,53 @@ class SanksiController extends Controller
     public function create(Request $request)
     {
         if ($request->isMethod('POST')) {
-            $lastSanksi = Sanksi::latest()->first();
-            $lastNumber = $lastSanksi ? intval(substr($lastSanksi->kode_sanksi, 1)) : 0;
-            $newNumber = $lastNumber + 1;
-            $newKodeSanksi = 'S' . $newNumber;
+            $request->validate([
+                'rentang_point' => 'required|string|max:255',
+                'jenis_sanksi' => 'required|string|max:255',
+            ]);
 
-            $data = [
-                'kode_sanksi' => $newKodeSanksi,
-                'rentang_point' => $request->rentang_point,
-                'jenis_sanksi' => $request->jenis_sanksi,
-            ];
+            $data = $request->only(['rentang_point', 'jenis_sanksi']);
 
-            if (!Sanksi::insert($data)) {
-                return response()->json(['message' => 'Gagal menambah sanksi'], 200);
+            $prefix = 'S';
+            $code = $this->generateUniqueCode($prefix);
+            
+            $data['kode_sanksi'] = $code;
+
+            if (!Sanksi::create($data)) {
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah sanksi']);
             }
 
-            return response()->json(['message' => 'Berhasil menambah sanksi'], 200);
+            return redirect()->route('sanksi')->with('success', 'Berhasil menambah sanksi');
         }
 
         return view('pages.dashboard.sanksi.create', [
-            'title' => 'Tambah sanksi',
+            'title' => 'Tambah Sanksi',
         ]);
     }
 
     public function update(Request $request, $id)
     {
         $sanksi = Sanksi::find($id);
+
         if ($request->isMethod('POST')) {
-            $data = [
-                'rentang_point' => $request->rentang_point,
-                'jenis_sanksi' => $request->jenis_sanksi,
+            $data = $request->only(['rentang_point', 'jenis_sanksi']);
+
+            $rules = [
+                'rentang_point' => 'required|string|max:255',
+                'jenis_sanksi' => 'required|string|max:255',
             ];
 
+            $request->validate($rules);
+
             if (!$sanksi->update($data)) {
-                return response()->json(['message' => 'Gagal update sanksi'], 200);
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah sanksi']);
             }
 
-            return response()->json(['message' => 'Berhasil update sanksi'], 200);
+            return redirect()->to('dashboard/sanksi/update/' . $id)->with(['success' => 'Berhasil update sanksi!']);
         }
 
         return view('pages.dashboard.sanksi.update', [
-            'title' => 'Perbarui sanksi',
+            'title' => 'Perbarui Sanksi',
             'data' => $sanksi,
         ]);
     }
@@ -67,9 +89,9 @@ class SanksiController extends Controller
     {
         $data = Sanksi::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['message' => 'Gagal hapus sanksi!'], 200);
+            return response()->json(['error' => 'Gagal hapus sanksi!'], 200);
         }
 
-        return response()->json(['message' => 'Berhasil hapus sanksi!'], 200);
+        return redirect()->to('dashboard/sanksi')->with(['success' => 'Berhasil hapus sanksi!']);
     }
 }

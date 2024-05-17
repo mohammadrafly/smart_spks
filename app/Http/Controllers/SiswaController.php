@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Siswa;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SiswaController extends Controller
@@ -11,53 +12,62 @@ class SiswaController extends Controller
     {   
         return view('pages.dashboard.siswa.index', [
             'title' => 'Data Siswa',
-            'data' => Siswa::all(),
+            'data' => Siswa::with('walikelas')->get(),
         ]);
     }
 
     public function create(Request $request)
     {
         if ($request->isMethod('POST')) {
-            $data = [
-                'nama' => $request->nama,
-                'nis' => $request->nis,
-                'kelas' => $request->kelas,
-                'wali_kelas' => $request->wali_kelas
-            ];
+            $data = $request->only(['nama', 'nis', 'kelas', 'wali_kelas_id']);
 
-            if (!Siswa::insert($data)) {
-                return response()->json(['message' => 'Gagal menambah siswa'], 200);
+            $request->validate([
+                'nama' => 'required|string|max:255',
+                'nis' => 'required|numeric|unique:siswa,nis',
+                'kelas' => 'required|string|max:255',
+                'wali_kelas_id' => 'required|numeric',
+            ]);
+
+            if (!Siswa::create($data)) {
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah siswa']);
             }
 
-            return response()->json(['message' => 'Berhasil menambah siswa'], 200);
+            return redirect()->route('siswa')->with('success', 'Berhasil menambah siswa');
         }
 
         return view('pages.dashboard.siswa.create', [
-            'title' => 'Tambah siswa',
+            'title' => 'Tambah Siswa',
+            'wali' => User::where('usertype', 'guru')->get()
         ]);
     }
 
     public function update(Request $request, $id)
     {
-        $siswa = Siswa::find($id);
+        $siswa = Siswa::with('walikelas')->find($id);
+
         if ($request->isMethod('POST')) {
-            $data = [
-                'nama' => $request->nama,
-                'nis' => $request->nis,
-                'kelas' => $request->kelas,
-                'wali_kelas' => $request->wali_kelas
+            $data = $request->only(['nama', 'nis', 'kelas', 'wali_kelas']);
+
+            $rules = [
+                'nama' => 'required|string|max:255',
+                'nis' => 'required|numeric|unique:siswa,nis,' . $siswa->id,
+                'kelas' => 'required|string|max:255',
+                'wali_kelas_id' => 'required|numeric',
             ];
 
+            $request->validate($rules);
+
             if (!$siswa->update($data)) {
-                return response()->json(['message' => 'Gagal update siswa'], 200);
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah siswa']);
             }
 
-            return response()->json(['message' => 'Berhasil update siswa'], 200);
+            return redirect()->to('dashboard/siswa/update/' . $id)->with(['success' => 'Berhasil update siswa!']);
         }
 
         return view('pages.dashboard.siswa.update', [
-            'title' => 'Perbarui siswa',
+            'title' => 'Perbarui Siswa',
             'data' => $siswa,
+            'wali' => User::where('usertype', 'guru')->get(),
         ]);
     }
 
@@ -65,9 +75,9 @@ class SiswaController extends Controller
     {
         $data = Siswa::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['message' => 'Gagal hapus siswa!'], 200);
+            return response()->json(['error' => 'Gagal hapus siswa!'], 200);
         }
 
-        return response()->json(['message' => 'Berhasil hapus siswa!'], 200);
+        return redirect()->to('dashboard/siswa')->with(['success' => 'Berhasil hapus siswa!']);
     }
 }

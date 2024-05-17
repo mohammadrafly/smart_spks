@@ -14,6 +14,6 @@ class JenisPelanggaran extends Model
 
     public function kriteria()
     {
-        return $this->belongsTo(KriteriaPelanggaran::class, 'kode_kriteria', 'kode_kriteria');
+        return $this->belongsTo(KriteriaPelanggaran::class, 'kode_kriteria', 'kode');
     }
 }

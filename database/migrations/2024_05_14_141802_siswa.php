@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama');
             $table->string('nis')->unique();
             $table->string('kelas');
-            $table->string('wali_kelas');
+            $table->unsignedBigInteger('wali_kelas_id');
             $table->timestamps();
         });
     }

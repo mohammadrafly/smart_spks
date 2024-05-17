@@ -3,59 +3,71 @@
 namespace App\Http\Controllers;
 
 use App\Models\JenisPelanggaran;
+use App\Models\KriteriaPelanggaran;
 use Illuminate\Http\Request;
 
 class JenisPelanggaranController extends Controller
 {
     public function index()
     {   
+        $kriteria = KriteriaPelanggaran::all();
+        $totalBobot = $kriteria->sum('bobot');
         return view('pages.dashboard.jenispelanggaran.index', [
-            'title' => 'Data Jenispelanggaran',
-            'data' => JenisPelanggaran::all(),
+            'title' => 'Data Kriteria Pelanggaran',
+            'totalBobot' => $totalBobot,
+            'jenis' => JenisPelanggaran::with('kriteria')->get(),
+            'kriteria' => KriteriaPelanggaran::all(),
         ]);
     }
 
     public function create(Request $request)
     {
         if ($request->isMethod('POST')) {
-            $data = [
-                'kode_kriteria' => $request->kode_kriteria,
-                'jenis_pelanggaran' => $request->jenis_pelanggaran,
-                'point' => $request->point,
-            ];
+            $request->validate([
+                'kode_kriteria' => 'required|string|max:255',
+                'jenis_pelanggaran' => 'required|string|max:255',
+                'point' => 'required|string|max:255',
+            ]);
 
-            if (!JenisPelanggaran::insert($data)) {
-                return response()->json(['message' => 'Gagal menambah jenis pelanggaran'], 200);
+            $data = $request->only(['kode_kriteria', 'jenis_pelanggaran', 'point']);
+
+            if (!JenisPelanggaran::create($data)) {
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah jenis pelanggaran']);
             }
 
-            return response()->json(['message' => 'Berhasil menambah jenis pelanggaran'], 200);
+            return redirect()->route('jenispelanggaran')->with('success', 'Berhasil menambah jenis pelanggaran');
         }
 
         return view('pages.dashboard.jenispelanggaran.create', [
-            'title' => 'Tambah jenis pelanggaran',
+            'title' => 'Tambah Jenis Pelanggaran',
+            'kriteria' => KriteriaPelanggaran::all(),
         ]);
     }
 
     public function update(Request $request, $id)
     {
         $jenispelanggaran = JenisPelanggaran::find($id);
+
         if ($request->isMethod('POST')) {
-            $data = [
-                'kode_kriteria' => $request->kode_kriteria,
-                'jenis_pelanggaran' => $request->jenis_pelanggaran,
-                'point' => $request->point,
-            ];
+            $data = $request->only(['kode_kriteria', 'jenis_pelanggaran', 'point']);
+
+            $request->validate([
+                'kode_kriteria' => 'required|string|max:255',
+                'jenis_pelanggaran' => 'required|string|max:255',
+                'point' => 'required|string|max:255',
+            ]);
 
             if (!$jenispelanggaran->update($data)) {
-                return response()->json(['message' => 'Gagal update jenis pelanggaran'], 200);
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah jenis pelanggaran']);
             }
 
-            return response()->json(['message' => 'Berhasil update jenis pelanggaran'], 200);
+            return redirect()->to('dashboard/jenispelanggaran/update/' . $id)->with(['success' => 'Berhasil update jenis pelanggaran!']);
         }
 
         return view('pages.dashboard.jenispelanggaran.update', [
-            'title' => 'Perbarui jenis pelanggaran',
+            'title' => 'Perbarui Jenis Pelanggaran',
             'data' => $jenispelanggaran,
+            'kriteria' => KriteriaPelanggaran::all(),
         ]);
     }
 
@@ -63,9 +75,9 @@ class JenisPelanggaranController extends Controller
     {
         $data = JenisPelanggaran::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['message' => 'Gagal hapus jenis pelanggaran!'], 200);
+            return response()->json(['error' => 'Gagal hapus jenis pelanggaran!'], 200);
         }
 
-        return response()->json(['message' => 'Berhasil hapus jenis pelanggaran!'], 200);
+        return redirect()->to('dashboard/jenispelanggaran')->with(['success' => 'Berhasil hapus jenis pelanggaran!']);
     }
 }

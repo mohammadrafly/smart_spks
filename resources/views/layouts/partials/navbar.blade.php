@@ -11,11 +11,11 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>  
         </div>
-        <div x-data="{ open: false }">
+        <div x-data="{ open: false }" class="relative">
             <div class="flex justify-between items-center cursor-pointer" x-on:click="open = ! open">
                 <div>
                     @if (Auth::user()->photo)
-                        <img src="{{asset('assets/photo_profile/'. Auth::user()->photo)}}" alt="">
+                        <img src="{{asset('assets/photo_profile/'. Auth::user()->photo)}}" alt="" class="w-8 h-8 rounded-full">
                     @else
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -32,9 +32,9 @@
                 </div>
             </div>
 
-            <div x-show="open" class="absolute p-2 w-[200px] shadow-lg bg-gray-100 rounded-lg mt-5">
+            <div x-show="open" x-transition class="fixed right-0 mr-10 p-2 w-[200px] shadow-lg bg-[#6888E4] rounded-lg mt-5">
                 <ul class="mx-2">
-                    <li class="transition duration-300 p-2 hover:bg-[#6888E4] hover:text-white rounded-lg my-2 bg-white text-[#6888E4]">
+                    <li class="transition duration-300 p-2 hover:bg-gray-50 rounded-lg my-2 bg-white text-[#6888E4]">
                         <a href="{{ route('profile.update')}}">Profile</a>
                     </li>
                     <li class="transition duration-300 p-2 hover:bg-red-600 rounded-lg my-2 bg-red-500 text-white">

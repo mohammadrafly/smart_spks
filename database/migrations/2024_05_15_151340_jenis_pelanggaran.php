@@ -11,6 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('kriteria_pelanggaran', function (Blueprint $table) {
+            $table->id();
+            $table->string('kode')->unique();
+            $table->string('kriteria');
+            $table->string('bobot');
+            $table->timestamps();
+        });
+
         Schema::create('jenis_pelanggaran', function (Blueprint $table) {
             $table->id();
             $table->string('kode_kriteria');
@@ -25,6 +33,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('kriteria_pelanggaran');
         Schema::dropIfExists('jenis_pelanggaran');
     }
 };

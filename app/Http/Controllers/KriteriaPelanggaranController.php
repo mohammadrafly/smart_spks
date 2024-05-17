@@ -7,52 +7,70 @@ use Illuminate\Http\Request;
 
 class KriteriaPelanggaranController extends Controller
 {
-    public function index()
-    {   
-        return view('pages.dashboard.kriteriapelanggaran.index', [
-            'title' => 'Data Kriteriapelanggaran',
-            'data' => KriteriaPelanggaran::all(),
-        ]);
-    }
-
     public function create(Request $request)
     {
         if ($request->isMethod('POST')) {
-            $data = [
-                'kode_kriteria' => $request->kode_kriteria,
-                'kriteria' => $request->kriteria,
-            ];
+            $request->validate([
+                'kriteria' => 'required|string|max:255',
+                'bobot' => 'required|numeric|min:0|max:100',
+            ]);
 
-            if (!KriteriaPelanggaran::insert($data)) {
-                return response()->json(['message' => 'Gagal menambah kriteria pelanggaran'], 200);
+            // Calculate the current total weight
+            $currentTotalBobot = KriteriaPelanggaran::sum('bobot');
+            $newBobot = $request->input('bobot');
+
+            // Check if the new total would exceed 100
+            if ($currentTotalBobot + $newBobot > 100) {
+                return redirect()->back()->withInput()->withErrors(['error' => 'Total persentasi bobot tidak boleh melebihi 100%.']);
             }
 
-            return response()->json(['message' => 'Berhasil menambah kriteria pelanggaran'], 200);
+            $latestCode = KriteriaPelanggaran::max('kode');
+            $lastNumber = intval(substr($latestCode, 1));
+
+            $nextCode = 'C' . ($lastNumber + 1);
+
+            $data = $request->only(['kriteria', 'bobot']);
+            $data['kode'] = $nextCode;
+
+            if (!KriteriaPelanggaran::create($data)) {
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah kriteria pelanggaran']);
+            }
+
+            return redirect()->route('jenispelanggaran')->with('success', 'Berhasil menambah kriteria pelanggaran');
         }
 
+        // Calculate the remaining weight
+        $currentTotalBobot = KriteriaPelanggaran::sum('bobot');
+        $remainingBobot = 100 - $currentTotalBobot;
+
         return view('pages.dashboard.kriteriapelanggaran.create', [
-            'title' => 'Tambah kriteria pelanggaran',
+            'title' => 'Tambah Kriteria Pelanggaran',
+            'kriteria' => KriteriaPelanggaran::all(),
+            'remainingBobot' => $remainingBobot,
         ]);
     }
 
     public function update(Request $request, $id)
     {
         $kriteriapelanggaran = KriteriaPelanggaran::find($id);
+
         if ($request->isMethod('POST')) {
-            $data = [
-                'kode_kriteria' => $request->kode_kriteria,
-                'kriteria' => $request->kriteria,
-            ];
+            $request->validate([
+                'kriteria' => 'required|string|max:255',
+                'bobot' => 'required|string|max:255',
+            ]);
+
+            $data = $request->only(['kriteria', 'bobot']);
 
             if (!$kriteriapelanggaran->update($data)) {
-                return response()->json(['message' => 'Gagal update kriteria pelanggaran'], 200);
+                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah kriteria pelanggaran']);
             }
 
-            return response()->json(['message' => 'Berhasil update kriteria pelanggaran'], 200);
+            return redirect()->to('dashboard/kriteriapelanggaran/update/' . $id)->with(['success' => 'Berhasil update kriteriapelanggaran!']);
         }
 
         return view('pages.dashboard.kriteriapelanggaran.update', [
-            'title' => 'Perbarui kriteria pelanggaran',
+            'title' => 'Perbarui Kriteria Pelanggaran',
             'data' => $kriteriapelanggaran,
         ]);
     }
@@ -61,9 +79,9 @@ class KriteriaPelanggaranController extends Controller
     {
         $data = KriteriaPelanggaran::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['message' => 'Gagal hapus kriteria pelanggaran!'], 200);
+            return response()->json(['error' => 'Gagal hapus kriteria pelanggaran!'], 200);
         }
 
-        return response()->json(['message' => 'Berhasil hapus kriteria pelanggaran!'], 200);
+        return redirect()->to('dashboard/jenispelanggaran')->with(['success' => 'Berhasil hapus kriteria pelanggaran!']);
     }
 }

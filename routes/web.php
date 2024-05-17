@@ -64,13 +64,13 @@ Route::middleware('auth')->group(function () {
             Route::controller(PelanggaranController::class)->group(function () {
                 Route::match(['GET'], '/', 'index')->name('pelanggaran');
                 Route::match(['GET', 'POST'], 'create', 'create')->name('pelanggaran.create');
+                Route::match(['GET', 'POST'], 'detail/{id}', 'detail')->name('pelanggaran.detail');
                 Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('pelanggaran.update');
                 Route::match(['GET'], 'delete/{id}', 'delete')->name('pelanggaran.delete');
             });
         });
         Route::prefix('kriteriapelanggaran')->group(function () {
             Route::controller(KriteriaPelanggaranController::class)->group(function () {
-                Route::match(['GET'], '/', 'index')->name('kriteriapelanggaran');
                 Route::match(['GET', 'POST'], 'create', 'create')->name('kriteriapelanggaran.create');
                 Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('kriteriapelanggaran.update');
                 Route::match(['GET'], 'delete/{id}', 'delete')->name('kriteriapelanggaran.delete');

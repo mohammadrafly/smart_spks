@@ -18,9 +18,14 @@
             <div class="text-[#6888E4] font-semibold text-2xl">
                 {{ $title }}
             </div>
-            <div class="bg-white p-5 mt-5 rounded-lg">
+            <div class="bg-white p-5 mt-5">
+                <div>
+                    @include('components.flash')
+                </div>
                 @yield('content')
             </div>
+
+            @yield('secondtable')
         </div>
     </div>
 
