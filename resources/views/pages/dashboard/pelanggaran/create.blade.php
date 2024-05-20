@@ -6,7 +6,7 @@
     @csrf
     <div class="py-5">
         <label for="siswa" class="mb-2 block font-semibold">Siswa</label>
-        <select name="id_siswa" id="id_siswa" class="border rounded p-2 w-full">
+        <select name="id_siswa" id="id_siswa" class="border rounded p-2 w-full js-example-basic-single">
             <option value="" disabled selected>Masukkan Siswa</option>
             @foreach ($siswa as $option)
                 <option value="{{ $option->id }}" {{ old('id_siswa') == $option->id ? 'selected' : '' }}>
@@ -42,6 +42,9 @@
 @section('script')
 
 <script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+    });
     // Embed the kriteria_pelanggaran data as JSON objects
     var kriteriaPelanggaran = @json($kriteria_pelanggaran);
 
