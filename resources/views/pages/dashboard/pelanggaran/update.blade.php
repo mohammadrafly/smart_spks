@@ -172,28 +172,6 @@
         }
     }
 
-    function updateKriteriaOptions() {
-        var kriteriaSelects = document.querySelectorAll('select[name="id_kriteria[]"]');
-        var selectedKriteriaIds = Array.from(kriteriaSelects).map(function(select) {
-            return select.value;
-        });
-
-        kriteriaSelects.forEach(function(select) {
-            var currentSelectedValue = select.value;
-            var options = select.querySelectorAll('option');
-
-            options.forEach(function(option) {
-                if (option.value === '' || option.value === currentSelectedValue) {
-                    option.disabled = false;
-                } else if (selectedKriteriaIds.includes(option.value)) {
-                    option.disabled = true;
-                } else {
-                    option.disabled = false;
-                }
-            });
-        });
-    }
-
     function removeRow(btn) {
         var row = btn.parentNode.parentNode;
         if (row) {
@@ -209,8 +187,6 @@
                 message.style.display = 'block';
             }
         }
-
-        updateKriteriaOptions();
     }
 </script>
 
