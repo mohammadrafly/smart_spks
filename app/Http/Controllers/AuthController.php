@@ -43,8 +43,9 @@ class AuthController extends Controller
         if ($request->isMethod('post')) {
             $data = $request->only(['name', 'email', 'password', 'phone']);
             $data['password'] = Hash::make($data['password']);
-            $data['usertpye'] = 'bk/guru';
+            $data['usertype'] = 'bk/guru';
             
+            dd($data);
             $user = User::where('email', $data['email'])->first();
 
             if ($user) {
