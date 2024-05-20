@@ -15,13 +15,17 @@ class SanksiController extends Controller
      */
     private function generateUniqueCode($prefix)
     {
-        $code = '';
-        do {
-            $code = $prefix . strtoupper(uniqid());
-        } while (Sanksi::where('kode_sanksi', $code)->exists());
+        $latestCode = Sanksi::where('kode_sanksi', 'like', $prefix . '%')
+                             ->orderBy('kode_sanksi', 'desc')
+                             ->first();
 
+        $counter = $latestCode ? intval(substr($latestCode->kode_sanksi, strlen($prefix))) + 1 : 1;
+ 
+        $code = $prefix . str_pad($counter, STR_PAD_LEFT);
+    
         return $code;
     }
+    
 
     public function index()
     {   

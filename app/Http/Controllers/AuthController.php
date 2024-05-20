@@ -41,7 +41,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         if ($request->isMethod('post')) {
-            $data = $request->only(['name', 'email', 'password', 'usertype']);
+            $data = $request->only(['name', 'email', 'password', 'phone']);
             $data['password'] = Hash::make($data['password']);
 
             $user = User::where('email', $data['email'])->first();

@@ -64,7 +64,7 @@
         </div>
         <div x-show="open === 'password'" x-transition>
             <div>
-                <form class="w-1/2" action="{{ route('password.update')}}" method="POST">
+                <form class="w-1/2" action="{{ route('password.update') }}" method="POST">
                     @csrf
                     <div class="py-5">
                         <label for="old_password" class="mb-2 block font-semibold">Password Lama</label>
@@ -81,16 +81,16 @@
                         @enderror
                     </div>
                     <div class="py-5">
-                        <label for="konfirmasi_new_password" class="mb-2 block font-semibold">Konfirmasi Password Baru</label>
-                        <input type="password" name="konfirmasi_new_password" id="konfirmasi_new_password" class="border rounded p-2 w-full" placeholder="Masukkan Konfirmasi Password Baru">
-                        @error('konfirmasi_new_password')
+                        <label for="new_password_confirmation" class="mb-2 block font-semibold">Konfirmasi Password Baru</label>
+                        <input type="password" name="new_password_confirmation" id="new_password_confirmation" class="border rounded p-2 w-full" placeholder="Masukkan Konfirmasi Password Baru">
+                        @error('new_password_confirmation')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
                     <button type="submit" class="bg-yellow-500 text-white rounded p-2 w-fit">Simpan Perubahan</button>
                 </form>
             </div>
-        </div>
+        </div>        
     </div>
 </div>
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ListPelanggaran;
+use App\Models\Pelanggaran;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -74,6 +76,19 @@ class SiswaController extends Controller
     public function delete($id)
     {
         $data = Siswa::findOrFail($id);
+
+        $pelanggaran = Pelanggaran::where('id_siswa', $id)->get();
+
+        foreach ($pelanggaran as $pel) {
+            $listPelanggaran = ListPelanggaran::where('pelanggaran_id', $pel->id)->get();
+
+            foreach ($listPelanggaran as $item) {
+                $item->delete();
+            }
+
+            $pel->delete();
+        }
+
         if (!$data->delete()) {
             return redirect()->route('siswa')->with(['error' => 'Gagal hapus siswa!']);
         }

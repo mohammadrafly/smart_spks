@@ -10,6 +10,7 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TindakanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\isAuthenticatedAs;
 
 Route::middleware('guest')->group(function () {
     Route::controller(AuthController::class)->group(function () {
@@ -28,14 +29,16 @@ Route::middleware('auth')->group(function () {
                 Route::match(['POST'], 'password', 'updatePassword')->name('password.update');
             });
         });
-        Route::prefix('user')->group(function () {
-            Route::controller(UserController::class)->group(function () {
-                Route::match(['GET'], '/', 'index')->name('user');
-                Route::match(['GET', 'POST'], 'create', 'create')->name('user.create');
-                Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('user.update');
-                Route::match(['GET'], 'delete/{id}', 'delete')->name('user.delete');
+        Route::middleware('isAuthenticatedAs:admin')->group(function() {
+            Route::prefix('user')->group(function () {
+                Route::controller(UserController::class)->group(function () {
+                    Route::match(['GET'], '/', 'index')->name('user');
+                    Route::match(['GET', 'POST'], 'create', 'create')->name('user.create');
+                    Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('user.update');
+                    Route::match(['GET'], 'delete/{id}', 'delete')->name('user.delete');
+                });
             });
-        });
+        });        
         Route::prefix('sanksi')->group(function () {
             Route::controller(SanksiController::class)->group(function () {
                 Route::match(['GET'], '/', 'index')->name('sanksi');

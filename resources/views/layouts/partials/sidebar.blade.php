@@ -64,6 +64,7 @@
                         Data Tindakan
                     </a>
                 </li>
+                @if (Auth::user()->usertype === 'admin')
                 <div class="border-b-2 my-5 opacity-50"></div>
                 <div class="font-bold text-[#a7b8ec] mb-3">
                     DATA PENGGUNA
@@ -76,5 +77,6 @@
                         Pengguna
                     </a>
                 </li>
+                @endif
             </ul>
         </div>

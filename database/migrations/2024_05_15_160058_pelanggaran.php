@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('id_siswa');
             $table->string('id_tindakan');
             $table->string('id_sanksi');
+            $table->enum('tingkat', ['Pelanggaran Ringan', 'Pelanggaran Sedang', 'Tindak Pidana Ringan (TIPIRING)', 'Tindak Pidana Berat (TIPIRAT)']);
             $table->timestamps();
         });
     }

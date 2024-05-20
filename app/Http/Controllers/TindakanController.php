@@ -15,13 +15,17 @@ class TindakanController extends Controller
      */
     private function generateUniqueCode($prefix)
     {
-        $code = '';
-        do {
-            $code = $prefix . strtoupper(uniqid());
-        } while (Tindakan::where('kode_tindakan', $code)->exists());
+        $latestCode = Tindakan::where('kode_tindakan', 'like', $prefix . '%')
+                             ->orderBy('kode_tindakan', 'desc')
+                             ->first();
 
+        $counter = $latestCode ? intval(substr($latestCode->kode_tindakan, strlen($prefix))) + 1 : 1;
+ 
+        $code = $prefix . str_pad($counter, STR_PAD_LEFT);
+    
         return $code;
     }
+    
 
     public function index()
     {   

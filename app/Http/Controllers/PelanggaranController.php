@@ -99,10 +99,25 @@ class PelanggaranController extends Controller
                     return $range && $overallScore >= $range['min'] && $overallScore <= $range['max'];
                 });
 
+                $tingkat = ''; 
+
+                if ($overallScore >= 1 && $overallScore <= 20) {
+                    $tingkat = 'Pelanggaran Ringan';
+                } elseif ($overallScore >= 21 && $overallScore <= 40) {
+                    $tingkat = 'Pelanggaran Sedang';
+                } elseif ($overallScore >= 41 && $overallScore <= 80) {
+                    $tingkat = 'Tindak Pidana Ringan (TIPIRING)';
+                } elseif ($overallScore >= 81 && $overallScore <= 100) {
+                    $tingkat = 'Tindak Pidana Berat (TIPIRAT)';
+                } else {
+                    return redirect()->route('pelanggaran')->with('error', 'Skor melebihi 100, silahkan kurangi kriteria');
+                }
+
                 $pelanggaran = Pelanggaran::create([
                     'id_siswa' => $idSiswa,
                     'id_tindakan' => $tindakan->id, 
                     'id_sanksi' => $sanksi->id, 
+                    'tingkat' => $tingkat,
                 ]);
 
                 foreach ($idKriteria as $index => $idKriteriaItem) {
@@ -115,7 +130,7 @@ class PelanggaranController extends Controller
         
                 return redirect()->route('pelanggaran')->with('success', 'Berhasil menambah pelanggaran');
             } catch (\Exception $e) {
-                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah pelanggaran']);
+                return redirect()->back()->withInput()->withErrors('error', 'Gagal menambah pelanggaran');
             }
         }        
 
@@ -191,12 +206,27 @@ class PelanggaranController extends Controller
                     $range = $this->parseRange($sanksi->rentang_point);
                     return $range && $overallScore >= $range['min'] && $overallScore <= $range['max'];
                 });
-    
+
+                $tingkat = ''; 
+
+                if ($overallScore >= 1 && $overallScore <= 20) {
+                    $tingkat = 'Pelanggaran Ringan';
+                } elseif ($overallScore >= 21 && $overallScore <= 40) {
+                    $tingkat = 'Pelanggaran Sedang';
+                } elseif ($overallScore >= 41 && $overallScore <= 80) {
+                    $tingkat = 'Tindak Pidana Ringan (TIPIRING)';
+                } elseif ($overallScore >= 81 && $overallScore <= 100) {
+                    $tingkat = 'Tindak Pidana Berat (TIPIRAT)';
+                } else {
+                    return redirect()->route('pelanggaran')->with('error', 'Skor melebihi 100, silahkan kurangi kriteria');
+                }
+
                 $pelanggaran = Pelanggaran::findOrFail($id);
                 $pelanggaran->update([
                     'id_siswa' => $idSiswa,
                     'id_tindakan' => $tindakan->id,
                     'id_sanksi' => $sanksi->id,
+                    'tingkat' => $tingkat,
                 ]);
     
                 $pelanggaran->listPelanggaran()->delete();
@@ -211,7 +241,7 @@ class PelanggaranController extends Controller
     
                 return redirect()->route('pelanggaran')->with('success', 'Berhasil memperbarui pelanggaran');
             } catch (\Exception $e) {
-                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal memperbarui pelanggaran']);
+                return redirect()->back()->withInput()->withErrors('error', 'Gagal memperbarui pelanggaran');
             }
         }
     
@@ -225,12 +255,26 @@ class PelanggaranController extends Controller
 
     public function detail($id)
     {
-        
+        $pelanggaran = Pelanggaran::with('sanksi', 'tindakan', 'siswa')->where('id', $id)->first();
+        //dd($pelanggaran);
+        return view('pages.dashboard.pelanggaran.detail', [
+            'title' => 'Pelanggaran Siswa',
+            'data' => $pelanggaran,
+            'list' => ListPelanggaran::with('kriteria', 'jenis')->where('pelanggaran_id', $pelanggaran->id)->get(),
+        ]);
     }
 
     public function delete($id)
     {
         $data = Pelanggaran::findOrFail($id);
+
+        $listPelanggaran = ListPelanggaran::where('pelanggaran_id', $data->id)->get();
+        
+        foreach($listPelanggaran as $item) {
+            $pelanggaran = ListPelanggaran::find($item->id);
+            $pelanggaran->delete();
+        }
+
         if (!$data->delete()) {
             return redirect()->route('pelanggaran')->with(['error' => 'Gagal hapus pelanggaran!']);
         }

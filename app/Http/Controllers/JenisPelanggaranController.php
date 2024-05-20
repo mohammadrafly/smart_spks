@@ -32,7 +32,7 @@ class JenisPelanggaranController extends Controller
             $data = $request->only(['kode_kriteria', 'jenis_pelanggaran', 'point']);
 
             if (!JenisPelanggaran::create($data)) {
-                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah jenis pelanggaran']);
+                return redirect()->back()->withInput()->withErrors('error', 'Gagal menambah jenis pelanggaran');
             }
 
             return redirect()->route('jenispelanggaran')->with('success', 'Berhasil menambah jenis pelanggaran');
@@ -58,10 +58,10 @@ class JenisPelanggaranController extends Controller
             ]);
 
             if (!$jenispelanggaran->update($data)) {
-                return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah jenis pelanggaran']);
+                return redirect()->back()->withInput()->withErrors('error', 'Gagal menambah jenis pelanggaran');
             }
 
-            return redirect()->route('jenispelanggaran')->with(['success' => 'Berhasil update jenis pelanggaran!']);
+            return redirect()->route('jenispelanggaran')->with('success', 'Berhasil update jenis pelanggaran!');
         }
 
         return view('pages.dashboard.jenispelanggaran.update', [
@@ -75,9 +75,9 @@ class JenisPelanggaranController extends Controller
     {
         $data = JenisPelanggaran::findOrFail($id);
         if (!$data->delete()) {
-            return redirect()->route('jenispelanggaran')->with(['error' => 'Gagal hapus jenis pelanggaran!']);
+            return redirect()->route('jenispelanggaran')->with('error', 'Gagal hapus jenis pelanggaran!');
         }
 
-        return redirect()->route('jenispelanggaran')->with(['success' => 'Berhasil hapus jenis pelanggaran!']);
+        return redirect()->route('jenispelanggaran')->with('success', 'Berhasil hapus jenis pelanggaran!');
     }
 }
