@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <div x-show="open" x-transition class="fixed right-0 mr-10 p-2 w-[200px] shadow-lg bg-[#6888E4] rounded-lg mt-5">
+            <div x-show="open" x-transition :class="{ 'hidden': !open }" class="fixed right-0 mr-10 p-2 w-[200px] shadow-lg bg-[#6888E4] rounded-lg mt-5">
                 <ul class="mx-2">
                     <a href="{{ route('profile.update')}}">
                         <li class="transition duration-300 p-2 hover:bg-gray-50 rounded-lg my-2 bg-white text-[#6888E4]">
@@ -45,7 +45,7 @@
                         </li>
                     </a>
                 </ul>
-            </div>
+            </div>            
         </div>
     </div>
 </div>
