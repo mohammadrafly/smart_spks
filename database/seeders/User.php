@@ -32,17 +32,7 @@ class User extends Seeder
                 'password' => Hash::make('guru'),
                 'photo' => '',
                 'phone' => '02100000',
-                'usertype' => 'guru',
-                'created_at' => Carbon::now(), 
-                'updated_at' => Carbon::now()
-            ],
-            [
-                'name' => 'Bk',
-                'email' => 'bk@gmail.com',
-                'password' => Hash::make('bk'),
-                'photo' => '',
-                'phone' => '02100000',
-                'usertype' => 'bk',
+                'usertype' => 'bk/guru',
                 'created_at' => Carbon::now(), 
                 'updated_at' => Carbon::now()
             ],

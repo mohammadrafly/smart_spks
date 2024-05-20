@@ -45,19 +45,10 @@
     // Embed the kriteria_pelanggaran data as JSON objects
     var kriteriaPelanggaran = @json($kriteria_pelanggaran);
 
-    // Define the maximum number of rows based on the number of kriteria
-    var maxRows = kriteriaPelanggaran.length;
-
     // Function to add a new row
     function addRow() {
         var dynamicRows = document.getElementById('dynamicRows');
         var message = document.getElementById('message');
-
-        // Check if the current number of rows is less than the maximum allowed
-        if (dynamicRows.children.length >= maxRows) {
-            alert('Anda tidak dapat menambahkan lebih banyak baris.');
-            return;
-        }
 
         // Hide the message when a row is added
         if (message) {
@@ -174,21 +165,6 @@
         var kriteriaSelects = document.querySelectorAll('select[name="id_kriteria[]"]');
         var selectedKriteriaIds = Array.from(kriteriaSelects).map(function(select) {
             return select.value;
-        });
-
-        kriteriaSelects.forEach(function(select) {
-            var currentSelectedValue = select.value;
-            var options = select.querySelectorAll('option');
-
-            options.forEach(function(option) {
-                if (option.value === '' || option.value === currentSelectedValue) {
-                    option.disabled = false;
-                } else if (selectedKriteriaIds.includes(option.value)) {
-                    option.disabled = true;
-                } else {
-                    option.disabled = false;
-                }
-            });
         });
     }
 

@@ -49,30 +49,45 @@ class PelanggaranController extends Controller
                 $idKriteria = $request->input('id_kriteria');
                 $idJenis = $request->input('id_jenis');
         
-                $totalWeightKriteria = 0;
-                foreach ($idKriteria as $kriteriaId) {
-                    $kriteria = KriteriaPelanggaran::findOrFail($kriteriaId);
-                    $totalWeightKriteria += $kriteria->bobot;
-                }
-        
                 $normalisasi = [];
                 foreach ($idKriteria as $kriteriaId) {
                     $kriteria = KriteriaPelanggaran::findOrFail($kriteriaId);
-                    $normalisasi[$kriteria->kode] = $kriteria->bobot / $totalWeightKriteria; // N = bobot / totalWeightKriteria
+                    $normalisasi[$kriteria->kode][] = $kriteria->bobot / 100; 
                 }
         
+                
                 $utility = [];
                 foreach ($idJenis as $jenisId) {
                     $jenis = JenisPelanggaran::findOrFail($jenisId);
-                    $utility[$jenis->kode_kriteria] = 100 - $jenis->point;
-                }
+                    $utility[$jenis->kode_kriteria][] = intval($jenis->point);
+                }                
         
-                $keseluruhanUtility = [];
-                foreach ($normalisasi as $kriteriaId => $value) {
-                    $keseluruhanUtility[] = $utility[$kriteriaId] * $value;
+                $result = [];
+                foreach ($normalisasi as $kode => $values1) {
+                    if (isset($utility[$kode])) {
+                        $values2 = $utility[$kode];
+                        
+                        if (count($values1) === count($values2)) {
+                            $result[$kode] = [];
+                            for ($i = 0; $i < count($values1); $i++) {
+                                $result[$kode][] = $values1[$i] * $values2[$i];
+                            }
+                        } else {
+                            $result[$kode] = null;
+                        }
+                    }
                 }
-        
-                $overallScore = array_sum($keseluruhanUtility);
+
+                $summedResults = [];
+                foreach ($result as $kode => $values) {
+                    if (is_array($values)) {
+                        $summedResults[$kode] = array_sum($values);
+                    } else {
+                        $summedResults[$kode] = null; 
+                    }
+                }
+
+                $overallScore = array_sum($summedResults);
         
                 $tindakan = Tindakan::all()->first(function ($tindakan) use ($overallScore) {
                     $range = $this->parseRange($tindakan->rentang_point);
@@ -127,30 +142,45 @@ class PelanggaranController extends Controller
                 $idKriteria = $request->input('id_kriteria');
                 $idJenis = $request->input('id_jenis');
     
-                $totalWeightKriteria = 0;
-                foreach ($idKriteria as $kriteriaId) {
-                    $kriteria = KriteriaPelanggaran::findOrFail($kriteriaId);
-                    $totalWeightKriteria += $kriteria->bobot;
-                }
-    
                 $normalisasi = [];
                 foreach ($idKriteria as $kriteriaId) {
                     $kriteria = KriteriaPelanggaran::findOrFail($kriteriaId);
-                    $normalisasi[$kriteria->kode] = $kriteria->bobot / $totalWeightKriteria; // N = bobot / totalWeightKriteria
+                    $normalisasi[$kriteria->kode][] = $kriteria->bobot / 100; 
                 }
-    
+        
+                
                 $utility = [];
                 foreach ($idJenis as $jenisId) {
                     $jenis = JenisPelanggaran::findOrFail($jenisId);
-                    $utility[$jenis->kode_kriteria] = 100 - $jenis->point;
+                    $utility[$jenis->kode_kriteria][] = intval($jenis->point);
+                }                
+        
+                $result = [];
+                foreach ($normalisasi as $kode => $values1) {
+                    if (isset($utility[$kode])) {
+                        $values2 = $utility[$kode];
+                        
+                        if (count($values1) === count($values2)) {
+                            $result[$kode] = [];
+                            for ($i = 0; $i < count($values1); $i++) {
+                                $result[$kode][] = $values1[$i] * $values2[$i];
+                            }
+                        } else {
+                            $result[$kode] = null;
+                        }
+                    }
                 }
-    
-                $keseluruhanUtility = [];
-                foreach ($normalisasi as $kriteriaId => $value) {
-                    $keseluruhanUtility[] = $utility[$kriteriaId] * $value;
+
+                $summedResults = [];
+                foreach ($result as $kode => $values) {
+                    if (is_array($values)) {
+                        $summedResults[$kode] = array_sum($values);
+                    } else {
+                        $summedResults[$kode] = null; 
+                    }
                 }
-    
-                $overallScore = array_sum($keseluruhanUtility);
+
+                $overallScore = array_sum($summedResults);
     
                 $tindakan = Tindakan::all()->first(function ($tindakan) use ($overallScore) {
                     $range = $this->parseRange($tindakan->rentang_point);
@@ -202,9 +232,9 @@ class PelanggaranController extends Controller
     {
         $data = Pelanggaran::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['error' => 'Gagal hapus pelanggaran!'], 200);
+            return redirect()->route('pelanggaran')->with(['error' => 'Gagal hapus pelanggaran!']);
         }
 
-        return redirect()->to('dashboard/pelanggaran')->with(['success' => 'Berhasil hapus pelanggaran!']);
+        return redirect()->route('pelanggaran')->with(['success' => 'Berhasil hapus pelanggaran!']);
     }
 }

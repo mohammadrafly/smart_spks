@@ -37,7 +37,7 @@ class SiswaController extends Controller
 
         return view('pages.dashboard.siswa.create', [
             'title' => 'Tambah Siswa',
-            'wali' => User::where('usertype', 'guru')->get()
+            'wali' => User::where('usertype', 'bk/guru')->get()
         ]);
     }
 
@@ -61,13 +61,13 @@ class SiswaController extends Controller
                 return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah siswa']);
             }
 
-            return redirect()->to('dashboard/siswa/update/' . $id)->with(['success' => 'Berhasil update siswa!']);
+            return redirect()->route('siswa')->with(['success' => 'Berhasil update siswa!']);
         }
 
         return view('pages.dashboard.siswa.update', [
             'title' => 'Perbarui Siswa',
             'data' => $siswa,
-            'wali' => User::where('usertype', 'guru')->get(),
+            'wali' => User::where('usertype', 'bk/guru')->get()
         ]);
     }
 
@@ -75,9 +75,9 @@ class SiswaController extends Controller
     {
         $data = Siswa::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['error' => 'Gagal hapus siswa!'], 200);
+            return redirect()->route('siswa')->with(['error' => 'Gagal hapus siswa!']);
         }
 
-        return redirect()->to('dashboard/siswa')->with(['success' => 'Berhasil hapus siswa!']);
+        return redirect()->route('siswa')->with(['success' => 'Berhasil hapus siswa!']);
     }
 }

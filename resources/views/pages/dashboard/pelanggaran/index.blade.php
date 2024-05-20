@@ -30,7 +30,7 @@
                 $sum = 0;
 
                 foreach ($pelanggaran->listPelanggaran as $item) {
-                    $sum += (100 - $item->jenis->point) * ($item->kriteria->bobot / 100);
+                    $sum += ($item->jenis->point) * ($item->kriteria->bobot / 100);
                 }
             @endphp
             <tr>

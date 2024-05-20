@@ -77,7 +77,7 @@ class TindakanController extends Controller
                 return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah tindakan']);
             }
 
-            return redirect()->to('dashboard/tindakan/update/' . $id)->with(['success' => 'Berhasil update tindakan!']);
+            return redirect()->route('tindakan')->with(['success' => 'Berhasil update tindakan!']);
         }
 
         return view('pages.dashboard.tindakan.update', [
@@ -90,9 +90,9 @@ class TindakanController extends Controller
     {
         $data = Tindakan::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['error' => 'Gagal hapus tindakan!'], 200);
+            return redirect()->route('tindakan')->with(['error' => 'Gagal hapus tindakan!']);
         }
 
-        return redirect()->to('dashboard/tindakan')->with(['success' => 'Berhasil hapus tindakan!']);
+        return redirect()->route('tindakan')->with(['success' => 'Berhasil hapus tindakan!']);
     }
 }

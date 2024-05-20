@@ -36,8 +36,7 @@
         <select name="usertype" id="usertype" class="border rounded p-2 w-full">
             <option value="{{ $data->usertype }}" selected>{{ $data->usertype }}</option>
             <option value="admin" {{ old('usertype', $data->usertype) == 'admin' ? 'selected' : '' }}>Admin</option>
-            <option value="guru" {{ old('usertype', $data->usertype) == 'guru' ? 'selected' : '' }}>Guru</option>
-            <option value="bk" {{ old('usertype', $data->usertype) == 'bk' ? 'selected' : '' }}>BK</option>
+            <option value="bk/guru" {{ old('usertype', $data->usertype)  == 'bk/guru' ? 'selected' : '' }}>BK/Guru</option>
         </select>
         @if($errors->has('usertype'))
             <div class="text-red-500 mt-2">

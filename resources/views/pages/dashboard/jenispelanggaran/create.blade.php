@@ -9,7 +9,7 @@
         <select name="kode_kriteria" id="kode_kriteria" class="border rounded p-2 w-full">
             <option value="">Pilih Kode Kriteria</option>
             @foreach($kriteria as $item)
-                <option value="{{ $item->kode }}">{{ $item->kode }}</option>
+                <option value="{{ $item->kode }}">{{ $item->kode }} - {{$item->kriteria}}</option>
             @endforeach
         </select>
         @if($errors->has('kode_kriteria'))

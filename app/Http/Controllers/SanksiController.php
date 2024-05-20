@@ -76,7 +76,7 @@ class SanksiController extends Controller
                 return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah sanksi']);
             }
 
-            return redirect()->to('dashboard/sanksi/update/' . $id)->with(['success' => 'Berhasil update sanksi!']);
+            return redirect()->route('sanksi')->with(['success' => 'Berhasil update sanksi!']);
         }
 
         return view('pages.dashboard.sanksi.update', [
@@ -89,9 +89,9 @@ class SanksiController extends Controller
     {
         $data = Sanksi::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['error' => 'Gagal hapus sanksi!'], 200);
+            return redirect()->route('sanksi')->with(['error' => 'Gagal hapus sanksi!']);
         }
 
-        return redirect()->to('dashboard/sanksi')->with(['success' => 'Berhasil hapus sanksi!']);
+        return redirect()->route('sanksi')->with(['success' => 'Berhasil hapus sanksi!']);
     }
 }

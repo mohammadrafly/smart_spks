@@ -61,7 +61,7 @@ class JenisPelanggaranController extends Controller
                 return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah jenis pelanggaran']);
             }
 
-            return redirect()->to('dashboard/jenispelanggaran/update/' . $id)->with(['success' => 'Berhasil update jenis pelanggaran!']);
+            return redirect()->route('jenispelanggaran')->with(['success' => 'Berhasil update jenis pelanggaran!']);
         }
 
         return view('pages.dashboard.jenispelanggaran.update', [
@@ -75,9 +75,9 @@ class JenisPelanggaranController extends Controller
     {
         $data = JenisPelanggaran::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['error' => 'Gagal hapus jenis pelanggaran!'], 200);
+            return redirect()->route('jenispelanggaran')->with(['error' => 'Gagal hapus jenis pelanggaran!']);
         }
 
-        return redirect()->to('dashboard/jenispelanggaran')->with(['success' => 'Berhasil hapus jenis pelanggaran!']);
+        return redirect()->route('jenispelanggaran')->with(['success' => 'Berhasil hapus jenis pelanggaran!']);
     }
 }

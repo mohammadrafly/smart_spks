@@ -43,8 +43,7 @@
         <label for="usertype" class="mb-2 block font-semibold">Role</label>
         <select name="usertype" id="usertype" class="border rounded p-2 w-full">
             <option value="admin" {{ old('usertype') == 'admin' ? 'selected' : '' }}>Admin</option>
-            <option value="guru" {{ old('usertype') == 'guru' ? 'selected' : '' }}>Guru</option>
-            <option value="bk" {{ old('usertype') == 'bk' ? 'selected' : '' }}>BK</option>
+            <option value="bk/guru" {{ old('usertype') == 'bk/guru' ? 'selected' : '' }}>BK/Guru</option>
         </select>
         @error('usertype')
         <p class="text-red-500 mt-1">{{ $message }}</p>

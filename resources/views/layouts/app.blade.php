@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ config('app.name') }}  | {{ $title }}</title>
   @vite('resources/css/app.css')
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
 </head>
 <body class="min-h-screen flex flex-col" x-data="{ open: true }">

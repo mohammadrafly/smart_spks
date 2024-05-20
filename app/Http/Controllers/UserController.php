@@ -31,7 +31,7 @@ class UserController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'phone' => 'required|numeric|unique:users,phone',
-                'usertype' => 'required|string|in:admin,guru,bk',
+                'usertype' => 'required|string|in:admin,bk/guru',
                 'password' => 'required|string|min:8|confirmed',
             ]);
 
@@ -58,7 +58,7 @@ class UserController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $user->id,
                 'phone' => 'required|numeric|unique:users,phone,' . $user->id,
-                'usertype' => 'required|string|in:admin,guru,bk',
+                'usertype' => 'required|string|in:admin,bk/guru',
             ];
 
             $request->validate($rules);
@@ -67,7 +67,7 @@ class UserController extends Controller
                 return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah pengguna']);
             }
 
-            return redirect()->to('dashboard/user/update/' . $id)->with(['success' => 'Berhasil update pengguna!']);
+            return redirect()->route('user')->with(['success' => 'Berhasil update pengguna!']);
         }
 
         return view('pages.dashboard.user.update', [
@@ -80,9 +80,9 @@ class UserController extends Controller
     {
         $data = User::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['error' => 'Gagal hapus pengguna!'], 200);
+            return redirect()->route('user')->with(['error' => 'Gagal hapus pengguna!']);
         }
 
-        return redirect()->to('dashboard/user')->with(['success' => 'Berhasil hapus pengguna!']);
+        return redirect()->route('user')->with(['success' => 'Berhasil hapus pengguna!']);
     }
 }

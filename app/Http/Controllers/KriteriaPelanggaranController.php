@@ -15,11 +15,9 @@ class KriteriaPelanggaranController extends Controller
                 'bobot' => 'required|numeric|min:0|max:100',
             ]);
 
-            // Calculate the current total weight
             $currentTotalBobot = KriteriaPelanggaran::sum('bobot');
             $newBobot = $request->input('bobot');
 
-            // Check if the new total would exceed 100
             if ($currentTotalBobot + $newBobot > 100) {
                 return redirect()->back()->withInput()->withErrors(['error' => 'Total persentasi bobot tidak boleh melebihi 100%.']);
             }
@@ -39,7 +37,6 @@ class KriteriaPelanggaranController extends Controller
             return redirect()->route('jenispelanggaran')->with('success', 'Berhasil menambah kriteria pelanggaran');
         }
 
-        // Calculate the remaining weight
         $currentTotalBobot = KriteriaPelanggaran::sum('bobot');
         $remainingBobot = 100 - $currentTotalBobot;
 
@@ -66,7 +63,7 @@ class KriteriaPelanggaranController extends Controller
                 return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menambah kriteria pelanggaran']);
             }
 
-            return redirect()->to('dashboard/kriteriapelanggaran/update/' . $id)->with(['success' => 'Berhasil update kriteriapelanggaran!']);
+            return redirect()->route('jenispelanggaran')->with(['success' => 'Berhasil update kriteriapelanggaran!']);
         }
 
         return view('pages.dashboard.kriteriapelanggaran.update', [
@@ -79,9 +76,9 @@ class KriteriaPelanggaranController extends Controller
     {
         $data = KriteriaPelanggaran::findOrFail($id);
         if (!$data->delete()) {
-            return response()->json(['error' => 'Gagal hapus kriteria pelanggaran!'], 200);
+            return redirect()->route('jenispelanggaran')->with(['success' => 'Berhasil hapus kriteria pelanggaran!']);
         }
 
-        return redirect()->to('dashboard/jenispelanggaran')->with(['success' => 'Berhasil hapus kriteria pelanggaran!']);
+        return redirect()->route('jenispelanggaran')->with(['success' => 'Berhasil hapus kriteria pelanggaran!']);
     }
 }

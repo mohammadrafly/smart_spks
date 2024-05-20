@@ -6,8 +6,8 @@
     <div class="bg-white rounded-lg w-[400px] min-h-[200px]">
         @if (Auth::user()->photo)
         <div class="flex justify-center items-center min-h-[200px]">
-            <img src="{{ asset('assets/photo_profile/'.Auth::user()->photo)}}" alt="">
-        </div>
+            <img src="{{ asset('storage/' . Auth::user()->photo)}}" alt="User Photo" class="rounded-full w-32 h-32 object-cover shadow-xl">
+        </div>        
         @else
         <div class="flex justify-center items-center min-h-[200px]">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-32 h-32">
@@ -28,22 +28,35 @@
         <div class="border-b-2 my-3 opacity-90"></div>
         <div x-show="open === 'profile'" x-transition>
             <div>
-                <form class="w-1/2">
+                <form class="w-1/2" action="{{ route('profile.update')}}" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="py-5">
                         <label for="photo" class="mb-2 block font-semibold">Photo</label>
-                        <input type="file" name="photo" id="photo" class="border rounded p-2 w-full" value="{{ $data->photo }}" placeholder="Masukkan Photo">
+                        <input type="file" name="photo" id="photo" class="border rounded p-2 w-full">
+                        @error('photo')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="py-5">
                         <label for="name" class="mb-2 block font-semibold">Name</label>
                         <input type="text" name="name" id="name" class="border rounded p-2 w-full" value="{{ $data->name }}" placeholder="Masukkan Name">
+                        @error('name')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="py-5">
                         <label for="email" class="mb-2 block font-semibold">Email</label>
                         <input type="email" name="email" id="email" class="border rounded p-2 w-full" value="{{ $data->email }}" placeholder="Masukkan Email">
+                        @error('email')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="py-5">
                         <label for="phone" class="mb-2 block font-semibold">Phone</label>
                         <input type="number" name="phone" id="phone" class="border rounded p-2 w-full" value="{{ $data->phone }}" placeholder="Masukkan Phone">
+                        @error('phone')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <button type="submit" class="bg-yellow-500 text-white rounded p-2 w-fit">Simpan Perubahan</button>
                 </form>
@@ -51,18 +64,28 @@
         </div>
         <div x-show="open === 'password'" x-transition>
             <div>
-                <form class="w-1/2">
+                <form class="w-1/2" action="{{ route('password.update')}}" method="POST">
+                    @csrf
                     <div class="py-5">
                         <label for="old_password" class="mb-2 block font-semibold">Password Lama</label>
                         <input type="password" name="old_password" id="old_password" class="border rounded p-2 w-full" placeholder="Masukkan Password Lama">
+                        @error('old_password')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="py-5">
-                        <label for="new_password" class="mb-2 block font-semibold">Password Lama</label>
+                        <label for="new_password" class="mb-2 block font-semibold">Password Baru</label>
                         <input type="password" name="new_password" id="new_password" class="border rounded p-2 w-full" placeholder="Masukkan Password Baru">
+                        @error('new_password')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="py-5">
-                        <label for="konfirmasi_new_password" class="mb-2 block font-semibold">Password Lama</label>
+                        <label for="konfirmasi_new_password" class="mb-2 block font-semibold">Konfirmasi Password Baru</label>
                         <input type="password" name="konfirmasi_new_password" id="konfirmasi_new_password" class="border rounded p-2 w-full" placeholder="Masukkan Konfirmasi Password Baru">
+                        @error('konfirmasi_new_password')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                     <button type="submit" class="bg-yellow-500 text-white rounded p-2 w-fit">Simpan Perubahan</button>
                 </form>

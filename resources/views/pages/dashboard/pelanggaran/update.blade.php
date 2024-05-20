@@ -72,16 +72,9 @@
 <script>
     var kriteriaPelanggaran = @json($kriteria_pelanggaran);
 
-    var maxRows = kriteriaPelanggaran.length;
-
     function addRow() {
         var dynamicRows = document.getElementById('dynamicRows');
         var message = document.getElementById('message');
-
-        if (dynamicRows.children.length >= maxRows) {
-            alert('Anda tidak dapat menambahkan lebih banyak baris.');
-            return;
-        }
 
         if (message) {
             message.style.display = 'none';
