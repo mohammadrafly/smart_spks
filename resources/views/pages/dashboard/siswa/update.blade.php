@@ -27,7 +27,7 @@
     </div>
     <div class="py-5">
         <label for="wali_kelas_id" class="mb-2 block font-semibold">Wali Kelas</label>
-        <select name="wali_kelas_id" id="wali_kelas_id" class="border rounded p-2 w-full">
+        <select name="wali_kelas_id" id="wali_kelas_id" class="border rounded p-2 w-full js-example-basic-single">
             <option value="" disabled {{ old('wali_kelas_id', $data->wali_kelas_id) === null ? 'selected' : '' }}>Masukkan Wali Kelas</option>
             @foreach ($wali as $option)
                 <option value="{{ $option->id }}" {{ old('wali_kelas_id', $data->wali_kelas_id) == $option->id ? 'selected' : '' }}>
@@ -42,4 +42,12 @@
     <button type="submit" class="bg-yellow-500 text-white rounded p-2 w-fit px-10">Simpan Perubahan</button>
 </form>
 
+@endsection
+
+@section('script')
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2();
+        });
+    </script>
 @endsection

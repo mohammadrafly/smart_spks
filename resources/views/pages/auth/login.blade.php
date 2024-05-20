@@ -55,7 +55,7 @@
                 alert(data.message);
                 window.location.href = data.redirect;
             } else {
-                alert('Registration failed: ' + data.message);
+                alert('Login failed: ' + data.message);
             }
         } catch (error) {
             alert('An error occurred: ' + error.message);
