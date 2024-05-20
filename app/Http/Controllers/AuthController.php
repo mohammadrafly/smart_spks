@@ -45,7 +45,6 @@ class AuthController extends Controller
             $data['password'] = Hash::make($data['password']);
             $data['usertype'] = 'bk/guru';
             
-            dd($data);
             $user = User::where('email', $data['email'])->first();
 
             if ($user) {
