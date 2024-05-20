@@ -6,6 +6,9 @@
   <title>{{ config('app.name') }}  | {{ $title }}</title>
   @vite('resources/css/app.css')
   <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+  <style>
+    [x-cloak] { display: none; }
+  </style>
 </head>
 <body class="min-h-screen flex flex-col" x-data="{ open: true }">
     @include('layouts.partials.navbar')
@@ -34,7 +37,6 @@
     <script src="{{ asset('assets/js/app.js')}}"></script>
     @vite('resources/js/app.js')
     @yield('script')
-
     <script>
         async function logout(event) {
             event.preventDefault();
