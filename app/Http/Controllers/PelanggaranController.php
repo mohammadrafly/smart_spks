@@ -91,16 +91,22 @@ class PelanggaranController extends Controller
         
                 $tindakan = Tindakan::all()->first(function ($tindakan) use ($overallScore) {
                     $range = $this->parseRange($tindakan->rentang_point);
-                    return $range && $overallScore >= $range['min'] && $overallScore <= $range['max'];
+                    if (!$range) {
+                        return redirect()->route('pelanggaran')->with('error', 'Rentang point does not exist for Tindakan');
+                    }
+                    return $overallScore >= $range['min'] && $overallScore <= $range['max'];
                 });
-        
+                
                 $sanksi = Sanksi::all()->first(function ($sanksi) use ($overallScore) {
                     $range = $this->parseRange($sanksi->rentang_point);
-                    return $range && $overallScore >= $range['min'] && $overallScore <= $range['max'];
+                    if (!$range) {
+                        return redirect()->route('pelanggaran')->with('error', 'Rentang point does not exist for Sanksi');
+                    }
+                    return $overallScore >= $range['min'] && $overallScore <= $range['max'];
                 });
-
+                
                 $tingkat = ''; 
-
+                
                 if ($overallScore >= 1 && $overallScore <= 20) {
                     $tingkat = 'Pelanggaran Ringan';
                 } elseif ($overallScore >= 21 && $overallScore <= 40) {
@@ -119,6 +125,10 @@ class PelanggaranController extends Controller
                     'id_sanksi' => $sanksi->id, 
                     'tingkat' => $tingkat,
                 ]);
+
+                if (!$pelanggaran) {
+                    return redirect()->route('pelanggaran')->with('error', 'gagal membuat pelanggaran');
+                }
 
                 foreach ($idKriteria as $index => $idKriteriaItem) {
                     ListPelanggaran::create([
@@ -196,15 +206,21 @@ class PelanggaranController extends Controller
                 }
 
                 $overallScore = array_sum($summedResults);
-    
+                
                 $tindakan = Tindakan::all()->first(function ($tindakan) use ($overallScore) {
                     $range = $this->parseRange($tindakan->rentang_point);
-                    return $range && $overallScore >= $range['min'] && $overallScore <= $range['max'];
+                    if (!$range) {
+                        return redirect()->route('pelanggaran')->with('error', 'Rentang point does not exist for Tindakan');
+                    }
+                    return $overallScore >= $range['min'] && $overallScore <= $range['max'];
                 });
-    
+                
                 $sanksi = Sanksi::all()->first(function ($sanksi) use ($overallScore) {
                     $range = $this->parseRange($sanksi->rentang_point);
-                    return $range && $overallScore >= $range['min'] && $overallScore <= $range['max'];
+                    if (!$range) {
+                        return redirect()->route('pelanggaran')->with('error', 'Rentang point does not exist for Sanksi');
+                    }
+                    return $overallScore >= $range['min'] && $overallScore <= $range['max'];
                 });
 
                 $tingkat = ''; 

@@ -42,25 +42,31 @@ Route::middleware('auth')->group(function () {
         Route::prefix('sanksi')->group(function () {
             Route::controller(SanksiController::class)->group(function () {
                 Route::match(['GET'], '/', 'index')->name('sanksi');
-                Route::match(['GET', 'POST'], 'create', 'create')->name('sanksi.create');
-                Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('sanksi.update');
-                Route::match(['GET'], 'delete/{id}', 'delete')->name('sanksi.delete');
+                Route::middleware('isAuthenticatedAs:admin')->group(function() {
+                    Route::match(['GET', 'POST'], 'create', 'create')->name('sanksi.create');
+                    Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('sanksi.update');
+                    Route::match(['GET'], 'delete/{id}', 'delete')->name('sanksi.delete');
+                });  
             });
         });
         Route::prefix('siswa')->group(function () {
             Route::controller(SiswaController::class)->group(function () {
                 Route::match(['GET'], '/', 'index')->name('siswa');
-                Route::match(['GET', 'POST'], 'create', 'create')->name('siswa.create');
-                Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('siswa.update');
-                Route::match(['GET'], 'delete/{id}', 'delete')->name('siswa.delete');
+                Route::middleware('isAuthenticatedAs:admin')->group(function() {
+                    Route::match(['GET', 'POST'], 'create', 'create')->name('siswa.create');
+                    Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('siswa.update');
+                    Route::match(['GET'], 'delete/{id}', 'delete')->name('siswa.delete');
+                });  
             });
         });
         Route::prefix('tindakan')->group(function () {
             Route::controller(TindakanController::class)->group(function () {
                 Route::match(['GET'], '/', 'index')->name('tindakan');
-                Route::match(['GET', 'POST'], 'create', 'create')->name('tindakan.create');
-                Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('tindakan.update');
-                Route::match(['GET'], 'delete/{id}', 'delete')->name('tindakan.delete');
+                Route::middleware('isAuthenticatedAs:admin')->group(function() {
+                    Route::match(['GET', 'POST'], 'create', 'create')->name('tindakan.create');
+                    Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('tindakan.update');
+                    Route::match(['GET'], 'delete/{id}', 'delete')->name('tindakan.delete');
+                });  
             });
         });
         Route::prefix('pelanggaran')->group(function () {
@@ -72,19 +78,23 @@ Route::middleware('auth')->group(function () {
                 Route::match(['GET'], 'delete/{id}', 'delete')->name('pelanggaran.delete');
             });
         });
-        Route::prefix('kriteriapelanggaran')->group(function () {
-            Route::controller(KriteriaPelanggaranController::class)->group(function () {
-                Route::match(['GET', 'POST'], 'create', 'create')->name('kriteriapelanggaran.create');
-                Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('kriteriapelanggaran.update');
-                Route::match(['GET'], 'delete/{id}', 'delete')->name('kriteriapelanggaran.delete');
+        Route::middleware('isAuthenticatedAs:admin')->group(function() {
+            Route::prefix('kriteriapelanggaran')->group(function () {
+                Route::controller(KriteriaPelanggaranController::class)->group(function () {
+                    Route::match(['GET', 'POST'], 'create', 'create')->name('kriteriapelanggaran.create');
+                    Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('kriteriapelanggaran.update');
+                    Route::match(['GET'], 'delete/{id}', 'delete')->name('kriteriapelanggaran.delete');
+                });
             });
         });
         Route::prefix('jenispelanggaran')->group(function () {
             Route::controller(JenisPelanggaranController::class)->group(function () {
                 Route::match(['GET'], '/', 'index')->name('jenispelanggaran');
-                Route::match(['GET', 'POST'], 'create', 'create')->name('jenispelanggaran.create');
-                Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('jenispelanggaran.update');
-                Route::match(['GET'], 'delete/{id}', 'delete')->name('jenispelanggaran.delete');
+                Route::middleware('isAuthenticatedAs:admin')->group(function() {
+                    Route::match(['GET', 'POST'], 'create', 'create')->name('jenispelanggaran.create');
+                    Route::match(['GET', 'POST'], 'update/{id}', 'update')->name('jenispelanggaran.update');
+                    Route::match(['GET'], 'delete/{id}', 'delete')->name('jenispelanggaran.delete');
+                });
             });
         });
     });
