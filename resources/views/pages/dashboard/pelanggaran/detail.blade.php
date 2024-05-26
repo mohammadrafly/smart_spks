@@ -46,7 +46,7 @@
       </tbody>
     </table>
     <table class="w-1/2">
-        <thead> 
+        <thead>
             <tr>
                 <th class="py-2 px-4 border-b">Nilai SMART</th>
                 <th class="py-2 px-4 border-b">Tindakan</th>
@@ -72,7 +72,7 @@
     document.body.innerHTML = printContents;
     window.print();
     document.body.innerHTML = originalContents;
-    location.reload(); // Reload the page to restore the original content
+    location.reload();
   });
 </script>
 @endsection
